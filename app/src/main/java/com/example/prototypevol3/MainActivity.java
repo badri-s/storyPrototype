@@ -24,8 +24,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        modelList.add(new Model(" A G G Y", getString(R.string.app_name), R.mipmap.download1,R.mipmap.images2,R.drawable.ic_favorite_black_24dp,R.mipmap.download1,R.drawable.ic_launcher_background));
-        modelList.add(new Model(" A G G Y", getString(R.string.app_name), R.mipmap.images2,R.mipmap.download1,R.drawable.ic_favorite_black_24dp,R.mipmap.download1,R.drawable.ic_launcher_background));
-        modelList.add(new Model(" A G G Y", getString(R.string.app_name), R.mipmap.images3,R.mipmap.download1,R.drawable.ic_favorite_black_24dp,R.mipmap.download1,R.drawable.ic_launcher_background));
+        modelList.add(new Model(R.mipmap.images3,R.mipmap.vendeta,R.mipmap.rikimorti,R.mipmap.story,R.mipmap.kartofila,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2));
+        modelList.add(new Model(R.mipmap.images3,R.mipmap.vendeta,R.mipmap.rikimorti,R.mipmap.story,R.mipmap.kartofila,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2));
+        modelList.add(new Model(R.mipmap.images3,R.mipmap.vendeta,R.mipmap.rikimorti,R.mipmap.story,R.mipmap.kartofila,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2));
+        modelList.add(new Model(R.mipmap.images3,R.mipmap.vendeta,R.mipmap.rikimorti,R.mipmap.story,R.mipmap.kartofila,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2,R.mipmap.images2));
     }
 }

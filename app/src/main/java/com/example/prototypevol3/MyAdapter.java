@@ -1,7 +1,9 @@
 package com.example.prototypevol3;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -17,12 +19,46 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class MyAdapter extends PagerAdapter {
-    ProgressBar pb1,pb2,pb3,pb4,pb5;
-    int counter = 0;
-    int pos = 0;
-    Context context;
+import jp.shts.android.storiesprogressview.StoriesProgressView;
+
+public class MyAdapter extends PagerAdapter implements StoriesProgressView.OnClickListener, StoriesProgressView.StoriesListener {
+    private StoriesProgressView storiesProgressView;
     List<Model> modelList;
+    private static final int PROGRES_COUNT=6;
+    private int pos = 0;
+    private ImageView imageView;
+    private int counter=0;
+    private int[] images = new int[]{
+            modelList.get(pos).getImage1(),
+            modelList.get(pos).getImage2(),
+            modelList.get(pos).getImage3(),
+            modelList.get(pos).getImage4(),
+            modelList.get(pos).getImage5(),
+            modelList.get(pos).getImage6(),
+            modelList.get(pos).getImage7(),
+            modelList.get(pos).getImage8(),
+            modelList.get(pos).getImage9(),
+            modelList.get(pos).getImage10()
+    };
+    Long limit = 500L;
+    Long prestime = 0L;
+    private View.OnTouchListener onTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            switch (event.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    prestime = System.currentTimeMillis();
+                    storiesProgressView.pause();
+                    return false;
+                case MotionEvent.ACTION_UP:
+                    long now = System.currentTimeMillis();
+                    storiesProgressView.resume();
+                    return limit < now - prestime;
+            }
+            return false;
+        }
+    };
+    Context context;
 
     public MyAdapter(Context context, List<Model> modelList) {
         this.context = context;
@@ -48,74 +84,57 @@ public class MyAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(@NonNull final ViewGroup container, final int position) {
         final View view = LayoutInflater.from(context).inflate(R.layout.card_item, container, false);
-        final ImageView movie_image = (ImageView) view.findViewById(R.id.story_image);
-        TextView movie_title = (TextView) view.findViewById(R.id.heshtega);
-        TextView movie_description = (TextView) view.findViewById(R.id.descreba);
-        Button btn1 = (Button) view.findViewById(R.id.btn1);
-        Button btn2 = (Button) view.findViewById(R.id.btn2);
-        movie_image.setImageResource(modelList.get(position).getImage());
-        movie_title.setText(modelList.get(position).getTitle());
-        movie_description.setText(modelList.get(position).getDescription());
-        btn1.setOnClickListener(new View.OnClickListener() {
+        final ImageView image = (ImageView) view.findViewById(R.id.image);
+
+        image.setImageResource(images[counter]);
+        final StoriesProgressView storiesProgressView = (StoriesProgressView)view.findViewById(R.id.story_image);
+        storiesProgressView.setStoriesCount(PROGRES_COUNT);
+        storiesProgressView.setStoryDuration(10000L);
+        storiesProgressView.setStoriesListener(this);
+        counter = 1;
+        storiesProgressView.startStories(images[counter]);
+        final View reverse = view.findViewById(R.id.reverse);
+        final View skip = view.findViewById(R.id.skip);
+        reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pos == 1) {
-                    movie_image.setImageResource(modelList.get(position).getImage());
-                    pos = 0;
-                }else if (pos == 2) {
-                    movie_image.setImageResource(modelList.get(position).getImage2());
-                    pos=1;
-
-                }else if (pos == 3) {
-                    movie_image.setImageResource(modelList.get(position).getImage3());
-                    pos= 2;
-
-                }else if (pos == 4) {
-                    movie_image.setImageResource(modelList.get(position).getImage4());
-                    pos=3;
-
-                }
-
-
+                storiesProgressView.reverse();
             }
         });
-        btn2.setOnClickListener(new View.OnClickListener() {
+        reverse.setOnTouchListener(onTouchListener);
+        skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (pos == 0) {
-                    setPb1(container);
-                    movie_image.setImageResource(modelList.get(position).getImage2());
-                    pos=1;
-                }else if (pos == 1) {
-                    movie_image.setImageResource(modelList.get(position).getImage3());
-                    pos=2;
-                }else if (pos == 2) {
-                    movie_image.setImageResource(modelList.get(position).getImage4());
-                    pos=3;
-                }else if (pos == 3) {
-                    movie_image.setImageResource(modelList.get(position).getImage5());
-                    pos=4;
-                }
+            storiesProgressView.skip();
             }
         });
-
+        skip.setOnTouchListener(onTouchListener);
         container.addView(view);
         return view;
     }
-    private void setPb1(@NonNull ViewGroup container){
-        View view = LayoutInflater.from(context).inflate(R.layout.card_item,container,false);
-        pb1 = (ProgressBar) view.findViewById(R.id.progressBar1);
-        final Timer t = new Timer();
-        TimerTask tt = new TimerTask() {
-            @Override
-            public void run() {
-                counter ++;
-                pb1.setProgress(counter);
-                if (counter==100){
-                    t.cancel();
-                }
-            }
-        };
-        t.schedule(tt,0,100);
+
+
+
+    @Override
+    public void onNext() {
+        imageView.setImageResource(images[++counter]);
+
+    }
+
+    @Override
+    public void onPrev() {
+        if ((counter-1)<0)return;
+        imageView.setImageResource(images[--counter]);
+
+    }
+
+    @Override
+    public void onComplete() {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
